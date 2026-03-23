@@ -1,0 +1,16 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+agent_md_validator/__init__.py
+agent_md_validator/cli.py
+agent_md_validator/reporter.py
+agent_md_validator/schemas.py
+agent_md_validator/validator.py
+agent_md_validator.egg-info/PKG-INFO
+agent_md_validator.egg-info/SOURCES.txt
+agent_md_validator.egg-info/dependency_links.txt
+agent_md_validator.egg-info/entry_points.txt
+agent_md_validator.egg-info/requires.txt
+agent_md_validator.egg-info/top_level.txt
+tests/test_validator.py

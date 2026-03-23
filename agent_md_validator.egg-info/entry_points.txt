@@ -1,0 +1,2 @@
+[console_scripts]
+agent-md-validate = agent_md_validator.cli:main
