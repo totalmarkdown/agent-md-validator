@@ -32,6 +32,10 @@ REQUIRED_SECTIONS: dict[str, list[str]] = {
     "LEASTPRIVILEGE.md": ["Privilege Baseline", "Just-In-Time Escalation"],
     "PROMPTSHIELD.md": ["Direct Injection Controls", "Detection Methods"],
     "PROVENANCE.md": ["Input Source Registry", "Contamination Policy"],
+    "CONSENT.md": ["Consent Requirements", "Consent Collection", "Consent Record", "Consent Revocation"],
+    "SHAREDCONTEXT.md": ["Access Control Matrix", "Memory Schema", "Retention Policy"],
+    "MEMORYSAFETY.md": ["Threat Model", "Input Sanitization", "Poisoning Detection", "Quarantine Procedures"],
+    "CIRCUITBREAKER.md": ["Circuit Breaker States", "Failure Thresholds", "Blast Radius Boundaries", "Fallback Behaviors"],
 }
 
 # Specs that are known to cross-reference other specs.
