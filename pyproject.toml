@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-md-validator"
-version = "0.1.0"
+version = "0.1.1"
 description = "Validate agent-md-specs configuration files"
 readme = "README.md"
 license = {text = "CC0-1.0"}
