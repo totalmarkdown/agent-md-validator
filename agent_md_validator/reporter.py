@@ -15,24 +15,34 @@ console = Console()
 
 
 def report_text(results: list[ValidationResult], strict: bool = False) -> int:
-    """Print human-readable validation report. Returns exit code."""
+    """Print human-readable validation report. Returns exit code.
+
+    Exit codes:
+      0 — no errors (warnings + info are OK; --strict escalates warnings
+          to errors but NEVER escalates info)
+      1 — one or more errors (or, in --strict, one or more warnings)
+    """
     total_errors = 0
     total_warnings = 0
+    total_info = 0
     passed = 0
 
     for result in results:
         errors = [i for i in result.issues if i.level == "error"]
         warnings = [i for i in result.issues if i.level == "warning"]
+        infos = [i for i in result.issues if i.level == "info"]
 
-        if not errors and not warnings:
+        if not errors and not warnings and not infos:
             passed += 1
             continue
 
         if strict:
             total_errors += len(errors) + len(warnings)
+            total_info += len(infos)
         else:
             total_errors += len(errors)
             total_warnings += len(warnings)
+            total_info += len(infos)
 
         console.print(f"\n[bold]{result.path}[/bold]")
         for issue in errors:
@@ -41,6 +51,8 @@ def report_text(results: list[ValidationResult], strict: bool = False) -> int:
             level = "ERROR" if strict else "WARN"
             style = "red" if strict else "yellow"
             console.print(f"  [{style}]{level}[/{style}]    {issue.message}")
+        for issue in infos:
+            console.print(f"  [dim cyan]INFO[/dim cyan]    {issue.message}")
 
     # Summary
     console.print()
@@ -55,6 +67,10 @@ def report_text(results: list[ValidationResult], strict: bool = False) -> int:
             "Warnings",
             f"[yellow]{total_warnings}[/yellow]" if total_warnings else "0",
         )
+    table.add_row(
+        "Info",
+        f"[cyan]{total_info}[/cyan]" if total_info else "0",
+    )
     console.print(table)
 
     if total_errors:

@@ -21,7 +21,7 @@ from .schemas import (
 @dataclass
 class Issue:
     path: str
-    level: str  # "error" or "warning"
+    level: str  # "error", "warning", or "info"
     message: str
 
 
@@ -37,6 +37,10 @@ class ValidationResult:
     @property
     def has_warnings(self) -> bool:
         return any(i.level == "warning" for i in self.issues)
+
+    @property
+    def has_info(self) -> bool:
+        return any(i.level == "info" for i in self.issues)
 
     @property
     def is_valid(self) -> bool:
@@ -112,7 +116,7 @@ def validate_file(path: Path) -> ValidationResult:
                     )
                 )
 
-    # Validate priority value
+    # Validate priority value (warning — recoverable)
     priority = frontmatter.get("priority", "")
     if priority and str(priority).lower() not in VALID_PRIORITIES:
         result.issues.append(
@@ -123,7 +127,7 @@ def validate_file(path: Path) -> ValidationResult:
             )
         )
 
-    # Validate version format
+    # Validate version format (warning — recoverable)
     version = frontmatter.get("spec_version", "")
     if version and not re.match(r"^\d+\.\d+\.\d+$", str(version)):
         result.issues.append(
@@ -134,7 +138,7 @@ def validate_file(path: Path) -> ValidationResult:
             )
         )
 
-    # Check spec_name matches filename
+    # Check spec_name matches filename (warning — recoverable)
     spec_name = frontmatter.get("spec_name", "")
     if spec_name and spec_name != rel:
         result.issues.append(
@@ -145,7 +149,10 @@ def validate_file(path: Path) -> ValidationResult:
             )
         )
 
-    # Check required sections
+    # Check recommended sections (informational — never fails --strict).
+    # Section headings are completeness suggestions, not conformance
+    # requirements. A spec can be valid without exactly-named sections;
+    # structural validity is defined by frontmatter + required fields.
     if rel in REQUIRED_SECTIONS:
         headings = extract_headings(body)
         heading_lower = [h.lower() for h in headings]
@@ -154,15 +161,15 @@ def validate_file(path: Path) -> ValidationResult:
                 result.issues.append(
                     Issue(
                         str(path),
-                        "warning",
+                        "info",
                         f"Missing recommended section: '## {section}'",
                     )
                 )
 
-    # Check footer
+    # Check footer (informational — never fails --strict).
     if "agent-md-specs" not in body and "totalmarkdown" not in body.lower():
         result.issues.append(
-            Issue(str(path), "warning", "Missing standard footer reference")
+            Issue(str(path), "info", "Missing standard footer reference")
         )
 
     return result
@@ -188,7 +195,9 @@ def validate_bundle(directory: Path) -> list[ValidationResult]:
     for spec_file in spec_files:
         results.append(validate_file(spec_file))
 
-    # Cross-reference checks
+    # Cross-reference checks (informational — a bundle may legitimately
+    # not need every spec that a given file mentions; this is a hint,
+    # not a conformance failure).
     existing_specs = {f.name for f in spec_files}
     for spec_file in spec_files:
         if spec_file.name in COMMON_CROSS_REFS:
@@ -199,7 +208,7 @@ def validate_bundle(directory: Path) -> list[ValidationResult]:
                             r.issues.append(
                                 Issue(
                                     str(spec_file),
-                                    "warning",
+                                    "info",
                                     f"Cross-references {ref} but it was not found in the bundle",
                                 )
                             )
