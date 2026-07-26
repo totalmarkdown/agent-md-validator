@@ -3,8 +3,11 @@
 # Fields required in YAML frontmatter for all specs
 REQUIRED_FIELDS_ALL = ["spec_name", "spec_version", "category", "tier"]
 
-# Additional fields required for Core tier specs
-REQUIRED_FIELDS_CORE = ["priority", "domain"]
+# Additional fields required for Core tier specs.
+# `domain` was required here until 2026-07-26. It was dropped: per-spec `domain:`
+# values asserted canonical locations for names we do not all own or serve, so
+# agent-md-specs removed the field. Specs that still declare it remain valid.
+REQUIRED_FIELDS_CORE = ["priority"]
 
 # Valid tier values
 VALID_TIERS = {"core", "extended"}

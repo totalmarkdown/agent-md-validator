@@ -11,7 +11,8 @@ configuration files.
 
 - **YAML frontmatter** — required fields (`spec_name`, `spec_version`,
   `category`, `tier`), valid tier/priority values, semver format
-- **Core spec fields** — Core tier specs must also have `priority` and `domain`
+- **Core spec fields** — Core tier specs must also have `priority`. `domain` is
+  optional and no longer required for any tier; specs that declare it still validate
 - **Required sections** — key specs (SOUL.md, ESCALATION.md, LIMITS.md, etc.)
   are checked for expected `##` headings
 - **Cross-references** — warns if a spec references another spec that
