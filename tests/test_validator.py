@@ -50,6 +50,19 @@ class TestValidateFile:
         assert result.is_valid
         assert not result.has_errors
 
+    def test_core_spec_without_domain(self):
+        # `domain` is optional. agent-md-specs dropped the field from all specs,
+        # so a Core spec that omits it must validate clean.
+        result = validate_file(FIXTURES / "core_no_domain_field" / "SOUL.md")
+        assert result.is_valid
+        assert not result.has_errors
+        assert result.issues == []
+
+    def test_core_spec_with_domain_still_valid(self):
+        # Relaxation, not removal — specs that still declare `domain` keep passing.
+        result = validate_file(FIXTURES / "valid_soul.md")
+        assert not result.has_errors
+
     def test_invalid_soul(self):
         result = validate_file(FIXTURES / "invalid_soul.md")
         errors = [i for i in result.issues if i.level == "error"]
